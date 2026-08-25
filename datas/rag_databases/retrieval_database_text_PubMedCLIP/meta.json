@@ -1,0 +1,1 @@
+{"clip_backbone": "PubMedCLIP", "retrieval_mode": "text", "num_vectors": 2069, "embedding_dim": 512, "metric": "inner_product_on_l2_normalised"}

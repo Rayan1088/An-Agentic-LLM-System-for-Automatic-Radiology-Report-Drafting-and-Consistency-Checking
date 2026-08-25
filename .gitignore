@@ -1,0 +1,17 @@
+.env
+__pycache__/
+*.pyc
+.idea/
+.vscode/
+.cache/
+.config/
+logs/
+.zsh_history
+.zcompdump
+.viminfo
+.bashrc
+.zshrc
+.vimrc
+.gitconfig
+datas/iu_xray/
+datas/iu_xray/

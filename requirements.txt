@@ -1,0 +1,18 @@
+ipykernel
+pyyaml
+pandas
+numpy
+python-dotenv
+torch
+torchvision
+Pillow
+huggingface_hub
+transformers
+accelerate
+bitsandbytes
+faiss-cpu  # Faiss is a library for efficient similarity search and clustering of dense vectors.
+open_clip_torch
+nltk 
+rouge-score
+bert-score
+openai

@@ -1,0 +1,87 @@
+
+# densenet121-res224-all model pathology name mapping
+PATHOLOGY_MAPPING:
+    Atelectasis: atelectasis
+    Consolidation: consolidation
+    Infiltration: infiltration
+    Pneumothorax: pneumothorax
+    Edema: edema
+    Emphysema: emphysema
+    Fibrosis: fibrosis
+    Effusion: pleural_effusion
+    Pneumonia: pneumonia
+    Pleural_Thickening: pleural_thickening
+    Cardiomegaly: cardiomegaly
+    Nodule: nodule
+    Mass: mass
+    Hernia: hernia
+    Lung Lesion: lung_lesion
+    Fracture: fracture
+    Lung Opacity: lung_opacity
+    Enlarged Cardiomediastinum: enlarged_cardiomediastinum
+
+TOP_K_RETRIEVAL: 5
+
+### IU Xry Dataset
+IU_DATASET_ANNOTATION_JSON_PATH: "/teamspace/studios/this_studio/datas/iu_xray/annotation.json"
+IU_DATASET_IMAGES_PATH: "/teamspace/studios/this_studio/datas/iu_xray/images"
+
+### Fine Tuned CLIP Directory
+FINE_TUNED_CLIP_CHECKPOINT: "/teamspace/studios/this_studio/checkpoints/clip_finetuned.pt"
+FINE_TUNED_PUBMEDCLIP_CHECKPOINT: "/teamspace/studios/this_studio/checkpoints/pubmedclip_finetuned.pt"
+FINE_TUNED_BIOMEDCLIP: "/teamspace/studios/this_studio/checkpoints/biomedclip_finetuned.pt"
+
+### For Evaluation 
+USE_BERT_SCORE: False
+BOOTSTRAP_SAMPLES: 0 #1000
+EVAL_RESULTS_DIR: "/teamspace/studios/this_studio/results"
+
+### Retrieval Database Directory
+RET_DATABASE_OUTPUT_DIR: "/teamspace/studios/this_studio/datas/rag_databases"
+
+RET_DATABSE_TEXT_FOR_BASE_OPENAICLIP: "/teamspace/studios/this_studio/datas/rag_databases/retrieval_database_text_OpenAICLIP"
+RET_DATABSE_TEXT_FOR_BASE_PUBMEDCLIP: "/teamspace/studios/this_studio/datas/rag_databases/retrieval_database_text_PubMedCLIP"
+RET_DATABSE_TEXT_FOR_BASE_BIOMEDCLIP: "/teamspace/studios/this_studio/datas/rag_databases/retrieval_database_text_BiomedCLIP"
+
+RET_DATABSE_IMAGE_FOR_BASE_OPENAICLIP: "/teamspace/studios/this_studio/datas/rag_databases/retrieval_database_image_OpenAICLIP"
+RET_DATABSE_IMAGE_FOR_BASE_PUBMEDCLIP: "/teamspace/studios/this_studio/datas/rag_databases/retrieval_database_image_PubMedCLIP"
+RET_DATABSE_IMAGE_FOR_BASE_BIOMEDCLIP: "/teamspace/studios/this_studio/datas/rag_databases/retrieval_database_image_BiomedCLIP"
+
+RET_DATABSE_TEXT_FOR_FINE_TUNED_OPENAICLIP:
+RET_DATABSE_TEXT_FOR_FINE_TUNED_PUBMEDCLIP:
+RET_DATABSE_TEXT_FOR_FINE_TUNED_BIOMEDCLIP:
+
+RET_DATABSE_IMAGE_FOR_FINE_TUNED_OPENAICLIP:
+RET_DATABSE_IMAGE_FOR_FINE_TUNED_PUBMEDCLIP:
+RET_DATABSE_IMAGE_FOR_FINE_TUNED_BIOMEDCLIP:
+
+### CLIP
+CLIP_SELECTION_METRIC: "rouge_L" ### or bert_score_f1 when USE_BERT_SCORE is on
+SELECTED_CLIP_BACKBONE: # "OpenAICLIP (zero-shot)" or "PubMedCLIP (zero-shot)" or "BiomedCLIP (zero-shot)" or "OpenAICLIP (fine-tuned)" ### leave blank to auto-select, set a name to force one
+
+### LLM config
+TEST_IMAGE_LIMIT: 20 ### or null for 590 test
+LLM_PROVIDER: "huggingface"
+LLAMA_MODEL_ID: "" ### blank-class default
+QWEN_MODEL_ID: "" ### blank-class default
+DEEPSEEK_MODEL_ID: "" ### blank-class default
+LLM_TEMPERATURE: 0.0
+LLAMA_MAX_TOKENS: 500
+DEEPSEEK_MAX_TOKENS: 500
+QWEN_MAX_TOKENS: 500
+CACHE_DIR_LLMS: "/teamspace/studios/this_studio/datas"
+SAVE_LLM_PROVENANCE: "/teamspace/studios/this_studio/datas"
+
+### Retrieval agent
+SAVE_RETRIEVED_REPORTS: "/teamspace/studios/this_studio/results"
+
+### Draft agrnt
+SAVE_DRAFT_REPORTS: "/teamspace/studios/this_studio/results"
+
+### Refine agent
+SAVE_REFINED_REPORTS: "/teamspace/studios/this_studio/results"
+
+### Vision agent 
+SAVE_VISUAL_DESCRIPTIONS: "/teamspace/studios/this_studio/results"
+FORCE_REGENERATE_VISUAL_DESCRIPTIONS: True
+

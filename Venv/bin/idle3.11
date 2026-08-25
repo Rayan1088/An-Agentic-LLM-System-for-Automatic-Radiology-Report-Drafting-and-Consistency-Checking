@@ -1,0 +1,5 @@
+#!/Users/rayan/Desktop/Projects/An-Agentic-LLM-System-for-Automatic-Radiology-Report-Drafting-and-Consistency-Checking/Venv/bin/python3.11
+
+from idlelib.pyshell import main
+if __name__ == '__main__':
+    main()

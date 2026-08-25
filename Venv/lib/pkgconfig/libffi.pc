@@ -1,0 +1,11 @@
+prefix=/Users/rayan/Desktop/Projects/An-Agentic-LLM-System-for-Automatic-Radiology-Report-Drafting-and-Consistency-Checking/Venv
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+toolexeclibdir=${libdir}
+includedir=/Users/rayan/Desktop/Projects/An-Agentic-LLM-System-for-Automatic-Radiology-Report-Drafting-and-Consistency-Checking/Venv/include
+
+Name: libffi
+Description: Library supporting Foreign Function Interfaces
+Version: 3.4.8
+Libs: -L${toolexeclibdir} -lffi
+Cflags: -I${includedir}
