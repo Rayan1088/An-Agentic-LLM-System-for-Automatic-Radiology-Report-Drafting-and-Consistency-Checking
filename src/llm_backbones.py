@@ -118,7 +118,10 @@ class BaseLLM:
                 self.total_output_tokens+=usage.get("output_tokens", 0)
                 if served_model:
                     self.served_models.add(served_model)
-                self.write_cache(key, system_prompt, user_prompt, response, usage, served_model)
+                if response and response.strip():
+                    self.write_cache(key, system_prompt, user_prompt, response, usage, served_model)
+                else:
+                    logger.warning(f"[{self.name}] empty response not cached, will retry on next run.")
                 return response
             except Exception as e:
                 last_error=e

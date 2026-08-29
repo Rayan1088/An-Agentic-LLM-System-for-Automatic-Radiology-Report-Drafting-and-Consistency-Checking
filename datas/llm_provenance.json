@@ -9,15 +9,15 @@
     "max_tokens": 500,
     "seed": 42,
     "served_models": [
-      "llama-3.3-70b-instruct"
+      "meta-llama/Llama-3.3-70B-Instruct-Turbo"
     ],
-    "total_calls": 0,
+    "total_calls": 20,
     "total_cache_hits": 40,
-    "input_tokens": 0,
-    "output_tokens": 0,
-    "cached_input_tokens": 26109,
-    "cached_output_tokens": 1729,
-    "avg_latency_sec": 0.0
+    "input_tokens": 10869,
+    "output_tokens": 774,
+    "cached_input_tokens": 21609,
+    "cached_output_tokens": 1802,
+    "avg_latency_sec": 0.8332192897796631
   },
   {
     "backbone": "Qwen",
@@ -31,13 +31,13 @@
     "served_models": [
       "qwen3-235b-a22b-instruct-2507"
     ],
-    "total_calls": 0,
+    "total_calls": 20,
     "total_cache_hits": 40,
-    "input_tokens": 0,
-    "output_tokens": 0,
-    "cached_input_tokens": 25315,
-    "cached_output_tokens": 1859,
-    "avg_latency_sec": 0.0
+    "input_tokens": 10509,
+    "output_tokens": 943,
+    "cached_input_tokens": 20811,
+    "cached_output_tokens": 1960,
+    "avg_latency_sec": 0.8816459774971008
   },
   {
     "backbone": "DeepSeek",
@@ -51,12 +51,12 @@
     "served_models": [
       "deepseek-ai/DeepSeek-V4-Flash-0731"
     ],
-    "total_calls": 0,
+    "total_calls": 20,
     "total_cache_hits": 40,
-    "input_tokens": 0,
-    "output_tokens": 0,
-    "cached_input_tokens": 24104,
-    "cached_output_tokens": 1624,
-    "avg_latency_sec": 0.0
+    "input_tokens": 10142,
+    "output_tokens": 751,
+    "cached_input_tokens": 19874,
+    "cached_output_tokens": 1692,
+    "avg_latency_sec": 0.9427748680114746
   }
 ]

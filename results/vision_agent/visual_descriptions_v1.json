@@ -1,6 +1,6 @@
 {
   "agent": "vision_agent",
-  "vlm_prompt": "You are a radiologist. State the findings visible in this chest X-ray. Rules: Report only what you observe. Do not explain what any finding means or what causes it. Do not use phrases like 'which is', 'this can be due to', or 'such as'. Cover: heart size, mediastinum, lungs, pleural spaces, bones. Write 2 to 3 short declarative sentences. Never exceed 3 sentences. Output only the findings. No preamble. Required style: Heart size is normal. The lungs are clear without focal consolidation. No pleural effusion or pneumothorax.",
+  "system_prompt": "You are a radiologist examining a chest X-ray.\n\nTask: state the findings that are visible in this image.\n\nRules:\n- Report only what you observe in the image. Do not explain what a finding means, what causes it, or what it might indicate.\n- Never use explanatory constructions such as 'which is', 'which are', 'this can be caused by', 'such as', or 'due to'.\n- Do not define medical terms.\n- Cover heart size, mediastinum, lungs, pleural spaces, and bones.\n- State normal structures as normal rather than omitting them.\n- Write in the terse declarative register of a radiology report.\n- Write 2 to 3 sentences. Never exceed 3 sentences.\n- Output only the findings. No preamble, no headings, no bullet points, no explanation of your reasoning.\n\nStyle example of the required output:\nHeart size is normal. The lungs are clear without focal consolidation. No pleural effusion or pneumothorax.",
   "num_descriptions": 20,
   "num_empty": 0,
   "vlm": {
@@ -17,169 +17,169 @@
   "usage": {
     "model_id": "chaoyinshe/llava-med-v1.5-mistral-7b-hf",
     "total_calls": 20,
-    "avg_latency_sec": 3.5789093375205994
+    "avg_latency_sec": 3.1255674362182617
   },
   "visual_descriptions": [
     {
       "index": 0,
-      "visual_description": "The chest X-ray shows a normal heart size, clear lungs without focal consolidation, and no pleural effusion or pneumothorax.",
-      "description_len": 19,
+      "visual_description": "The chest X-ray shows no abnormalities.",
+      "description_len": 6,
       "study_id": "CXR3030_IM-1405",
       "image_path": "/teamspace/studios/this_studio/datas/iu_xray/images/CXR3030_IM-1405/0.png",
       "reference": "Normal cardiomediastinal silhouette. There is no focal consolidation. There are no XXXX of a large pleural effusion. There is no pneumothorax. There is no acute bony abnormality seen."
     },
     {
       "index": 1,
-      "visual_description": "The chest X-ray shows a normal heart size, clear lungs without focal consolidation, and no pleural effusion or pneumothorax.",
-      "description_len": 19,
+      "visual_description": "The chest X-ray shows no abnormalities.",
+      "description_len": 6,
       "study_id": "CXR38_IM-1911",
       "image_path": "/teamspace/studios/this_studio/datas/iu_xray/images/CXR38_IM-1911/0.png",
       "reference": "Lungs are clear. There is no pneumothorax or pleural effusion. The heart and mediastinum are within normal limits. Bony structures are intact."
     },
     {
       "index": 2,
-      "visual_description": "The chest X-ray shows a normal heart size, clear lungs without focal consolidation, and no pleural effusion or pneumothorax.",
-      "description_len": 19,
+      "visual_description": "The chest X-ray shows no abnormalities.",
+      "description_len": 6,
       "study_id": "CXR3957_IM-2022",
       "image_path": "/teamspace/studios/this_studio/datas/iu_xray/images/CXR3957_IM-2022/0.png",
       "reference": "Cardiac and mediastinal contours are within normal limits. The lungs are clear. Bony structures are intact."
     },
     {
       "index": 3,
-      "visual_description": "The chest X-ray shows a normal heart size, clear lungs without focal consolidation, and no pleural effusion or pneumothorax.",
-      "description_len": 19,
+      "visual_description": "The chest X-ray shows no abnormalities.",
+      "description_len": 6,
       "study_id": "CXR621_IM-2203",
       "image_path": "/teamspace/studios/this_studio/datas/iu_xray/images/CXR621_IM-2203/0.png",
       "reference": "The heart, pulmonary XXXX and mediastinum are within normal limits. There is no pleural effusion or pneumothorax. There is no focal air space opacity to suggest a pneumonia. There are mild degenerative changes of the spine."
     },
     {
       "index": 4,
-      "visual_description": "The chest X-ray shows a normal heart size, clear lungs without focal consolidation, and no pleural effusion or pneumothorax.",
-      "description_len": 19,
+      "visual_description": "The chest X-ray shows no abnormalities.",
+      "description_len": 6,
       "study_id": "CXR1347_IM-0225",
       "image_path": "/teamspace/studios/this_studio/datas/iu_xray/images/CXR1347_IM-0225/0.png",
       "reference": "The cardiomediastinal silhouette is normal in size and contour. No focal consolidation, pneumothorax or large pleural effusion. Negative for acute displaced rib fracture."
     },
     {
       "index": 5,
-      "visual_description": "The chest X-ray shows a normal heart size, clear lungs without focal consolidation, and no pleural effusion or pneumothorax.",
-      "description_len": 19,
+      "visual_description": "The chest X-ray shows no abnormalities.",
+      "description_len": 6,
       "study_id": "CXR2915_IM-1317",
       "image_path": "/teamspace/studios/this_studio/datas/iu_xray/images/CXR2915_IM-1317/0.png",
       "reference": "The heart size is normal. The mediastinal contour is within normal limits. The lungs are free of any focal infiltrates. There are no nodules or masses. No visible pneumothorax. No visible pleural fluid. The XXXX are grossly normal. There is no visible free intraperitoneal air under the diaphragm."
     },
     {
       "index": 6,
-      "visual_description": "The chest X-ray shows a normal heart size, clear lungs without focal consolidation, and no pleural effusion or pneumothorax.",
-      "description_len": 19,
+      "visual_description": "The chest X-ray shows no abnormalities.",
+      "description_len": 6,
       "study_id": "CXR34_IM-1644",
       "image_path": "/teamspace/studios/this_studio/datas/iu_xray/images/CXR34_IM-1644/0.png",
       "reference": "The heart is normal in size and contour. The lungs are clear, without evidence of infiltrate. There is no pneumothorax or effusion."
     },
     {
       "index": 7,
-      "visual_description": "The chest X-ray shows a normal heart size, clear lungs without focal consolidation, and no pleural effusion or pneumothorax.",
-      "description_len": 19,
+      "visual_description": "The chest X-ray shows no abnormalities.",
+      "description_len": 6,
       "study_id": "CXR2590_IM-1083",
       "image_path": "/teamspace/studios/this_studio/datas/iu_xray/images/CXR2590_IM-1083/0.png",
       "reference": "The heart is normal in size. The mediastinum is unremarkable. The lungs are clear."
     },
     {
       "index": 8,
-      "visual_description": "The chest X-ray shows a normal heart size, clear lungs without focal consolidation, and no pleural effusion or pneumothorax.",
-      "description_len": 19,
+      "visual_description": "The chest X-ray shows normal heart size, clear lungs without focal consolidation, and no pleural effusion or pneumothorax.",
+      "description_len": 18,
       "study_id": "CXR1176_IM-0119",
       "image_path": "/teamspace/studios/this_studio/datas/iu_xray/images/CXR1176_IM-0119/0.png",
       "reference": "The lungs and pleural spaces show no acute abnormality. Heart size and pulmonary vascularity within normal limits. ."
     },
     {
       "index": 9,
-      "visual_description": "The chest X-ray shows a normal heart size, clear lungs without focal consolidation, and no pleural effusion or pneumothorax.",
-      "description_len": 19,
+      "visual_description": "The chest X-ray shows normal heart size, clear lungs without focal consolidation, and no pleural effusion or pneumothorax.",
+      "description_len": 18,
       "study_id": "CXR738_IM-2296",
       "image_path": "/teamspace/studios/this_studio/datas/iu_xray/images/CXR738_IM-2296/0.png",
       "reference": "The heart and lungs have XXXX XXXX in the interval. Both lungs are clear and expanded. Heart and mediastinum normal."
     },
     {
       "index": 10,
-      "visual_description": "The chest X-ray shows a normal heart size, clear lungs without focal consolidation, and no pleural effusion or pneumothorax.",
-      "description_len": 19,
+      "visual_description": "The chest X-ray shows normal heart size, clear lungs without focal consolidation, and no pleural effusion or pneumothorax.",
+      "description_len": 18,
       "study_id": "CXR2480_IM-1009",
       "image_path": "/teamspace/studios/this_studio/datas/iu_xray/images/CXR2480_IM-1009/0.png",
       "reference": "The heart is normal in size and contour. There is no mediastinal widening. The lungs are clear bilaterally. No large pleural effusion or pneumothorax. The XXXX are intact."
     },
     {
       "index": 11,
-      "visual_description": "The chest X-ray shows a normal heart size, clear lungs without focal consolidation, and no pleural effusion or pneumothorax.",
-      "description_len": 19,
+      "visual_description": "The chest X-ray shows normal heart size, clear lungs without focal consolidation, and no pleural effusion or pneumothorax.",
+      "description_len": 18,
       "study_id": "CXR3222_IM-1522",
       "image_path": "/teamspace/studios/this_studio/datas/iu_xray/images/CXR3222_IM-1522/0.png",
       "reference": "The cardiomediastinal silhouette and pulmonary vasculature are within normal limits in size. The lungs are clear of focal airspace disease, pneumothorax, or pleural effusion. There are no acute bony findings."
     },
     {
       "index": 12,
-      "visual_description": "The chest X-ray shows a normal heart size, clear lungs without focal consolidation, and no pleural effusion or pneumothorax.",
-      "description_len": 19,
+      "visual_description": "The chest X-ray shows no abnormalities.",
+      "description_len": 6,
       "study_id": "CXR1005_IM-0006",
       "image_path": "/teamspace/studios/this_studio/datas/iu_xray/images/CXR1005_IM-0006/0.png",
       "reference": "Cardiac and mediastinal contours are within normal limits. The lungs are clear. Bony structures are intact."
     },
     {
       "index": 13,
-      "visual_description": "The chest X-ray shows a normal heart size, clear lungs without focal consolidation, and no pleural effusion or pneumothorax.",
-      "description_len": 19,
+      "visual_description": "The chest X-ray shows normal heart size, clear lungs without focal consolidation, and no pleural effusion or pneumothorax.",
+      "description_len": 18,
       "study_id": "CXR3542_IM-1734",
       "image_path": "/teamspace/studios/this_studio/datas/iu_xray/images/CXR3542_IM-1734/0.png",
       "reference": "Heart size and mediastinal contours appear within normal limits. Pulmonary vascularity is within normal limits. No focal consolidation, suspicious pulmonary opacity, pneumothorax or definite pleural effusion. Visualized osseous structures appear intact."
     },
     {
       "index": 14,
-      "visual_description": "The chest X-ray shows a normal heart size, clear lungs without focal consolidation, and no pleural effusion or pneumothorax.",
-      "description_len": 19,
+      "visual_description": "The chest X-ray shows normal heart size, clear lungs without focal consolidation, and no pleural effusion or pneumothorax.",
+      "description_len": 18,
       "study_id": "CXR325_IM-1539",
       "image_path": "/teamspace/studios/this_studio/datas/iu_xray/images/CXR325_IM-1539/0.png",
       "reference": "Lungs are clear. No pleural effusions or pneumothoraces. Heart and mediastinum of normal size and contour."
     },
     {
       "index": 15,
-      "visual_description": "The chest X-ray shows a normal heart size, clear lungs without focal consolidation, and no pleural effusion or pneumothorax.",
-      "description_len": 19,
+      "visual_description": "The chest X-ray shows normal heart size, clear lungs without focal consolidation, and no pleural effusion or pneumothorax.",
+      "description_len": 18,
       "study_id": "CXR2785_IM-1220",
       "image_path": "/teamspace/studios/this_studio/datas/iu_xray/images/CXR2785_IM-1220/0.png",
       "reference": "Cardiac and mediastinal contours are within normal limits. The lungs are clear. Bony structures are intact."
     },
     {
       "index": 16,
-      "visual_description": "The chest X-ray shows a normal heart size, clear lungs without focal consolidation, and no pleural effusion or pneumothorax.",
-      "description_len": 19,
+      "visual_description": "The chest X-ray shows normal heart size, clear lungs without focal consolidation, and no pleural effusion or pneumothorax.",
+      "description_len": 18,
       "study_id": "CXR3991_IM-2044",
       "image_path": "/teamspace/studios/this_studio/datas/iu_xray/images/CXR3991_IM-2044/0.png",
       "reference": "The cardiac contours are normal. The lungs are clear. Thoracic spondylosis."
     },
     {
       "index": 17,
-      "visual_description": "The chest X-ray shows a normal heart size, clear lungs without focal consolidation, and no pleural effusion or pneumothorax.",
-      "description_len": 19,
+      "visual_description": "The chest X-ray shows normal heart size, clear lungs without focal consolidation, and no pleural effusion or pneumothorax.",
+      "description_len": 18,
       "study_id": "CXR3527_IM-1724",
       "image_path": "/teamspace/studios/this_studio/datas/iu_xray/images/CXR3527_IM-1724/0.png",
       "reference": "Both lungs are clear and expanded. Heart and mediastinum normal."
     },
     {
       "index": 18,
-      "visual_description": "The chest X-ray shows a normal heart size, clear lungs without focal consolidation, and no pleural effusion or pneumothorax.",
-      "description_len": 19,
+      "visual_description": "The chest X-ray shows no abnormalities.",
+      "description_len": 6,
       "study_id": "CXR3460_IM-1681",
       "image_path": "/teamspace/studios/this_studio/datas/iu_xray/images/CXR3460_IM-1681/0.png",
       "reference": "The heart and mediastinum are unremarkable. The lungs are clear without infiltrate. There is no effusion or pneumothorax."
     },
     {
       "index": 19,
-      "visual_description": "The chest X-ray shows a normal heart size, clear lungs without focal consolidation, and no pleural effusion or pneumothorax.",
-      "description_len": 19,
+      "visual_description": "The chest X-ray shows normal heart size, clear lungs without focal consolidation, and no pleural effusion or pneumothorax.",
+      "description_len": 18,
       "study_id": "CXR2784_IM-1220",
       "image_path": "/teamspace/studios/this_studio/datas/iu_xray/images/CXR2784_IM-1220/0.png",
       "reference": "The heart is normal in size and contour. There is no mediastinal widening. The lungs are clear bilaterally. No large pleural effusion or pneumothorax. The XXXX are intact."
     }
   ],
-  "vlm_prompt_version": "v1"
+  "vision_prompt_version": "v1"
 }

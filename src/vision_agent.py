@@ -13,12 +13,12 @@ class VisionAgent:
 
     def __init__(self,
                  vlm: Any,
-                 vlm_prompt: Optional[str]=None):
+                 system_prompt: Optional[str]=None):
         
-        if not vlm_prompt:
-            raise CustomException("VisionAgent requires vlm_prompt.", sys)
+        if not system_prompt:
+            raise CustomException("VisionAgent requires system_prompt.", sys)
         self.vlm=vlm
-        self.vlm_prompt=vlm_prompt
+        self.system_prompt=system_prompt
     
     @staticmethod
     def clean_vlm_output(text: str):
@@ -31,11 +31,12 @@ class VisionAgent:
             if text.lower().startswith(prefix):
                 text=text[len(prefix):].strip()
                 break
-        return " ".join(line.strip() for line in text.splitlines() if line.strip())
+        text=" ".join(line.strip() for line in text.splitlines() if line.strip())
+        return text
 
     def single_run(self, image: Image.Image):
         try:
-            visual_description=self.vlm.run_inference(image, self.vlm_prompt)
+            visual_description=self.vlm.run_inference(image, self.system_prompt)
             clean_output=self.clean_vlm_output(visual_description)
             return clean_output
         except CustomException:
@@ -95,7 +96,7 @@ class VisionAgent:
                 records.append(record)   
             
             payload={"agent": self.name,
-                     "vlm_prompt": self.vlm_prompt,
+                     "system_prompt": self.system_prompt,
                      "num_descriptions": len(records),
                      "num_empty": sum(1 for d in visual_descriptions if not str(d).strip()),
                      "vlm": self.vlm.llava_provenance() if hasattr(self.vlm, "llava_provenance") else str(self.vlm),

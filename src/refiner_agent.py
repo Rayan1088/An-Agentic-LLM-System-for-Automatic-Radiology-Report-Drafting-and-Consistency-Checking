@@ -52,7 +52,8 @@ class RefinerAgent:
             if text.lower().startswith(prefix):
                 text=text[len(prefix):].strip()
                 break
-        return " ".join(line.strip() for line in text.splitlines() if line.strip())
+        text=" ".join(line.strip() for line in text.splitlines() if line.strip())
+        return text
         
     def build_user_prompt(self, 
                           draft: str,

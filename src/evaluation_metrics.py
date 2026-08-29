@@ -205,14 +205,14 @@ class AgentEvalMetrics:
                     f" {'LENGTH RATIO':<22}: {results['len_ratio']:.2f}")
         logger.info("+"*80)
     
-    def to_row(self, results: dict, label: Optional[str]=None):
+    '''def to_row(self, results: dict, label: Optional[str]=None):
         row ={"system": label or results.get("name", self.name)}
         for name in self.metric_names():
             row[name.upper()]=round(results[name], 4)
         row["CORPUS_BLEU_4"]=round(results["corpus_bleu_4"], 4)
         row["LENGTH_RATIO"]=round(results["len_ratio"], 2)
         row["NUMBER_OF_SAMPLES"]=results["num_samples"]
-        return row
+        return row'''
     
     @staticmethod
     def coparison_table_pd(all_results: Sequence[dict]):

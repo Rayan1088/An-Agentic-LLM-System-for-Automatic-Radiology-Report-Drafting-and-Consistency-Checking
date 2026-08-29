@@ -274,7 +274,7 @@ if __name__ == "__main__":
                                                pairs=train_pair,
                                                retrieval_mode="image")
             
-            ### For test image to train report retrieval
+            ### For text to image from train report retrieval
             text_embeddings_builder = RetrievalDatabaseBuilder(backbone_name, device=device)
             text_embeddings_builder.run_build(output_base_dir=config["RET_DATABASE_OUTPUT_DIR"],
                                               reports=train_reports, 

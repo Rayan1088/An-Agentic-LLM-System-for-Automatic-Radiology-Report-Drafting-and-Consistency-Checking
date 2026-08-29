@@ -11,7 +11,12 @@ logs/
 .viminfo
 .bashrc
 .zshrc
+.DS_Store
 .vimrc
 .gitconfig
+.cursor-server/
+.vscode-server/
+.windsurf-server/
 datas/iu_xray/
-datas/iu_xray/
+
+datas/llm_cache/

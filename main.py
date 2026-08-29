@@ -14,10 +14,12 @@ from src.clip_backbones import OpenAICLIP, PubMedCLIP, BiomedCLIP
 from src.retrieval_agent import RetrievalAgent
 from src.vision_agent import VisionAgent
 from src.llava_med_backbone import LLaVAMedVLM
+from src.synthesis_agent import SynthesisAgent
 from src.draft_agent import DraftAgent
 from src.refiner_agent import RefinerAgent
-from src.prompts import (sys_prompts_and_versions_for_draft_agent, sys_prompts_and_versions_for_refiner_agent, sys_prompts_and_versions_for_vision_agent,
-                         draft_prompt_version, refiner_prompt_version, vlm_prompt_version)
+from src.prompts import (sys_prompts_and_versions_for_draft_agent, sys_prompts_and_versions_for_refiner_agent,
+                         sys_prompts_and_versions_for_vision_agent, sys_prompts_and_versions_for_synthesis_agent, 
+                         draft_prompt_version, refiner_prompt_version, vision_prompt_version, synthesis_prompt_version)
 from src.retrieval_database_build import IUXRayDataset
 
 logger = logging.getLogger("main.py")
@@ -45,14 +47,18 @@ if __name__ == "__main__":
 
     image_loader=ImageLoader(image_paths=test_image_paths)
     filenames, images = image_loader.load_raw_images()
+    paths_subset=filenames[:config["TEST_IMAGE_LIMIT"]] if config["TEST_IMAGE_LIMIT"] else filenames
+    images_subset=images[:config["TEST_IMAGE_LIMIT"]] if config["TEST_IMAGE_LIMIT"] else images
     logger.info(f"Loaded {len(images)} test images for retrieval agent")
 
     ### Ground truth report text for each test image
     ### This is the REFERENCE for every stage of the pipeline (retrieval baseline, draft, refiner, final synthesis).
     gt_report=[report_lookup[fname] for fname in filenames]
+    gt_subset=gt_report[:config["TEST_IMAGE_LIMIT"]] if config["TEST_IMAGE_LIMIT"] else gt_report
     study_ids=[study_id_lookup[fname] for fname in filenames]
+    ids_subset= study_ids[:config["TEST_IMAGE_LIMIT"]] if config["TEST_IMAGE_LIMIT"] else study_ids
     logger.info(f"Unique ground truth reports: {len(set(gt_report))} / {len(gt_report)}")
-
+    
     ##############################################################################################
     ################################# For Retrieval Agent ########################################
     ##############################################################################################
@@ -167,6 +173,7 @@ if __name__ == "__main__":
             logger.warning(f"No backbone had metric [{selection_clip_metric}]. Falling back to first clip backbone [{selected_clip_backbone}].")
 
     batch_retrieved=retrieved_per_clip_backbone_results[selected_clip_backbone]
+    retrieved_subset=batch_retrieved[:config["TEST_IMAGE_LIMIT"]] if config["TEST_IMAGE_LIMIT"] else batch_retrieved
     logger.info(f"Using retrieval output from [{selected_clip_backbone}] for thr LLM agents.")
 
     ##############################################################################################
@@ -180,14 +187,67 @@ if __name__ == "__main__":
         logger.info(f"LLM ready: {llm_name} - {llm}")
 
     ##############################################################################################
+    ##################################### For Vision Agent ######################################
+    ##############################################################################################
+    vision_agent_eval_results=[]
+    visual_descriptions=None
+    visual_descriptions_saved_path=os.path.join(config["SAVE_VISUAL_DESCRIPTIONS"], f"visual_descriptions_{vision_prompt_version}.json")
+
+    visual_descriptions_cache_path=os.path.join(os.path.dirname(visual_descriptions_saved_path), "vision_agent", os.path.basename(visual_descriptions_saved_path))
+    ### Check visual_descriptions saved file exist
+    if os.path.exists(visual_descriptions_cache_path):
+        try:### then load cached visual_descriptions from save path for vision agent
+            cached=VisionAgent.load_visual_descriptions(visual_descriptions_cache_path)
+            if len(cached)!=len(ids_subset):
+                logger.warning(f"[vision_agent] cached count {len(cached)} != current subset {len(ids_subset)}; regenerating.")
+                visual_descriptions=None
+            else:
+                visual_descriptions=cached
+                logger.info(f"[vision_agent] reusing {len(visual_descriptions)} saved descriptions from [{visual_descriptions_cache_path}]")
+        except Exception as e:
+            logger.error(f"[vision_agent] could not read cache at [{visual_descriptions_cache_path}]: {e}. Regenerating.")
+
+    if config.get("FORCE_REGENERATE_VISUAL_DESCRIPTIONS", False):
+        logger.info("[vision_agent] force regenerate set. ignoring any cache")
+        visual_descriptions=None
+
+    if visual_descriptions is None:
+        vlm=LLaVAMedVLM(device=device, 
+                        load_in_4bit=True)
+        vision_agent=VisionAgent(vlm=vlm, system_prompt=sys_prompts_and_versions_for_vision_agent[vision_prompt_version])
+        visual_descriptions=vision_agent.batch_run(images_subset)
+        vision_agent.save_visual_description(visual_descriptions=visual_descriptions,
+                                             output_path=visual_descriptions_saved_path,
+                                             study_ids=ids_subset,
+                                             image_paths=paths_subset,
+                                             references=gt_subset,
+                                             extra_meta={"vision_prompt_version": vision_prompt_version})
+        vlm.unload_model()
+        del vlm, vision_agent
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+    else:
+        logger.info(f"[vision_agent] reusing {len(visual_descriptions)} saved descriptions from {visual_descriptions_cache_path}")
+
+    try:
+        logger.info("Evaluating vision agent results................................")
+        vision_agent_evaluator=AgentEvalMetrics(name=f"Vision Agent [LLaVA-Med {vision_prompt_version}]",
+                                                use_bert_score=config.get("USE_BERT_SCORE", False),
+                                                rescale_bert_score_with_baseline=True,
+                                                bootstrap_samples=config.get("BOOTSTRAP_SAMPLES", 0))
+        vision_agent_evl_results=vision_agent_evaluator.run_evaluation(predictions=visual_descriptions, references=gt_subset)
+        vision_agent_evaluator.print_report(vision_agent_evl_results)
+        vision_agent_eval_results.append(vision_agent_evl_results)
+    except Exception as e:
+        logger.error(f"Skipping vision agent evaluation due to error: {e}")
+
+    ##############################################################################################
     ##################################### For Draft Agent ########################################
     ##############################################################################################
     all_llm_backbone_eval_results_for_draft_agent=[]
-    retrieved_subset=batch_retrieved[:config["TEST_IMAGE_LIMIT"]] if config["TEST_IMAGE_LIMIT"] else batch_retrieved
-    gt_subset=gt_report[:config["TEST_IMAGE_LIMIT"]] if config["TEST_IMAGE_LIMIT"] else gt_report
-    ids_subset= study_ids[:config["TEST_IMAGE_LIMIT"]] if config["TEST_IMAGE_LIMIT"] else study_ids
-    logger.info(f"Running the draft agent on [{len(retrieved_subset)}] studies (limit={config['TEST_IMAGE_LIMIT']}).")
     drafts_per_llm={}
+
+    logger.info(f"Running the draft agent on [{len(retrieved_subset)}] studies (limit={config['TEST_IMAGE_LIMIT']}).")
 
     for llm_name, llm in llms.items():
         logger.info(f"Draft agrnt with LLM: {llm_name}..............................................................")
@@ -256,61 +316,48 @@ if __name__ == "__main__":
             continue
 
     ##############################################################################################
-    ##################################### For Vision Agent ######################################
+    ##################################### For Synthesis Agent ######################################
     ##############################################################################################
-    vision_agent_eval_results=[]
-    visual_descriptions=None
-    images_subset=images[:config["TEST_IMAGE_LIMIT"]] if config["TEST_IMAGE_LIMIT"] else images
-    paths_subset=filenames[:config["TEST_IMAGE_LIMIT"]] if config["TEST_IMAGE_LIMIT"] else filenames
-    visual_descriptions_saved_path=os.path.join(config["SAVE_VISUAL_DESCRIPTIONS"], f"visual_descriptions_{vlm_prompt_version}.json")
+    all_llm_backbone_eval_results_for_sysnthesis_agent=[]
+    final_reports_per_llm={}
 
-    visual_descriptions_cache_path=os.path.join(os.path.dirname(visual_descriptions_saved_path), "vision_agent", os.path.basename(visual_descriptions_saved_path))
-    ### Check visual_descriptions saved file exist
-    if os.path.exists(visual_descriptions_cache_path):
-        try:### then load cached visual_descriptions from save path for vision agent
-            cached=VisionAgent.load_visual_descriptions(visual_descriptions_cache_path)
-            if len(cached)!=len(ids_subset):
-                logger.warning(f"[vision_agent] cached count {len(cached)} != current subset {len(ids_subset)}; regenerating.")
-                visual_descriptions=None
-            else:
-                visual_descriptions=cached
-                logger.info(f"[vision_agent] reusing {len(visual_descriptions)} saved descriptions from [{visual_descriptions_cache_path}]")
+    for llm_name, llm in llms.items():
+        logger.info(f"Synthesis agrnt with LLM: {llm_name}..............................................................")
+        try:
+            if llm_name not in refinements_per_llm:
+                logger.warning(f"[{llm_name}] no refined reports available, skipping synthesis.")
+                continue
+            current_refined=refinements_per_llm[llm_name]
+            synthesis_agent=SynthesisAgent(llm=llm, system_prompt=sys_prompts_and_versions_for_synthesis_agent[synthesis_prompt_version])
+            logger.info(f"[{llm_name}] example synthesis user prompt:\n{synthesis_agent.build_user_prompt(current_drafts[0], current_refined[0], visual_descriptions[0])}")
+            final_reports=synthesis_agent.batch_run(current_drafts, current_refined, visual_descriptions)
+            final_reports_per_llm[llm_name]=final_reports
+
+            synthesis_agent.save_final_reports(final_reports=final_reports,
+                                               output_path=os.path.join(config["SAVE_FINAL_REPORTS"], f"final_reports_{llm_name.lower()}_{synthesis_prompt_version}.json"),
+                                               study_ids=ids_subset,
+                                               references=gt_subset,
+                                               draft_reports=current_drafts,
+                                               refined_reports=current_refined,
+                                               visual_descriptions=visual_descriptions,
+                                               extra_meta={"synthesis_prompt_version": synthesis_prompt_version,
+                                                           "draft_prompt_version": draft_prompt_version,
+                                                           "refiner_prompt_version": refiner_prompt_version,
+                                                           "vision_prompt_version": vision_prompt_version,
+                                                           "retrieval_backbone": selected_clip_backbone})
+            
+            logger.info(f"Evaluating synthesis results for [{llm_name}]............................")
+            synthesis_agent_evaluator=AgentEvalMetrics(name=f"Synthesis Agent [{llm_name}]",
+                                                     use_bert_score=config.get("USE_BERT_SCORE", False),
+                                                     rescale_bert_score_with_baseline=True,
+                                                     bootstrap_samples=config.get("BOOTSTRAP_SAMPLES", 0))
+            synthesis_agent_eval_results=synthesis_agent_evaluator.run_evaluation(predictions=final_reports, references=gt_subset)
+            synthesis_agent_evaluator.print_report(synthesis_agent_eval_results)
+            all_llm_backbone_eval_results_for_sysnthesis_agent.append(synthesis_agent_eval_results)
         except Exception as e:
-            logger.error(f"[vision_agent] could not read cache at [{visual_descriptions_cache_path}]: {e}. Regenerating.")
+            logger.error(f"Skipping synthesis agent for [{llm_name}] due to error: {e}")
+            continue
 
-    if config.get("FORCE_REGENERATE_VISUAL_DESCRIPTIONS", False):
-        logger.info("[vision_agent] force regenerate set. ignoring any cache")
-        visual_descriptions=None
-
-    if visual_descriptions is None:
-        vlm=LLaVAMedVLM(device=device, 
-                        load_in_4bit=True)
-        vision_agent=VisionAgent(vlm=vlm, vlm_prompt=sys_prompts_and_versions_for_vision_agent[vlm_prompt_version])
-        visual_descriptions=vision_agent.batch_run(images_subset)
-        vision_agent.save_visual_description(visual_descriptions=visual_descriptions,
-                                             output_path=visual_descriptions_saved_path,
-                                             study_ids=ids_subset,
-                                             image_paths=paths_subset,
-                                             references=gt_subset,
-                                             extra_meta={"vlm_prompt_version": vlm_prompt_version})
-        vlm.unload_model()
-        del vlm, vision_agent
-        if torch.cuda.is_available():
-            torch.cuda.empty_cache()
-    else:
-        logger.info(f"[vision_agent] reusing {len(visual_descriptions)} saved descriptions from {visual_descriptions_cache_path}")
-
-    try:
-        logger.info("Evaluating vision agent results................................")
-        vision_agent_evaluator=AgentEvalMetrics(name=f"Vision Agent [LLaVA-Med {vlm_prompt_version}]",
-                                                use_bert_score=config.get("USE_BERT_SCORE", False),
-                                                rescale_bert_score_with_baseline=True,
-                                                bootstrap_samples=config.get("BOOTSTRAP_SAMPLES", 0))
-        vision_agent_evl_results=vision_agent_evaluator.run_evaluation(predictions=visual_descriptions, references=gt_subset)
-        vision_agent_evaluator.print_report(vision_agent_evl_results)
-        vision_agent_eval_results.append(vision_agent_evl_results)
-    except Exception as e:
-        logger.error(f"Skipping vision agent evaluation due to error: {e}")
 
     ##############################################################################################
     ############ Save llm_provenance & eval results comparison table for all agent ###############
@@ -354,9 +401,20 @@ if __name__ == "__main__":
     if vision_agent_eval_results:
         comparison_df_vision_agent=AgentEvalMetrics.coparison_table_pd(vision_agent_eval_results)
         logger.info(f"Comparison vision agent results:\n\n{comparison_df_vision_agent.to_string(index=False)}\n")
-        output_path_vision_agent=os.path.join(config["EVAL_RESULTS_DIR"], "vision_agent" ,f"vision_agent_results_{vlm_prompt_version}.csv")
+        output_path_vision_agent=os.path.join(config["EVAL_RESULTS_DIR"], "vision_agent" ,f"vision_agent_results_{vision_prompt_version}.csv")
         os.makedirs(os.path.dirname(output_path_vision_agent), exist_ok=True)
         comparison_df_vision_agent.to_csv(output_path_vision_agent, index=False)
         logger.info(f"Vision agent results saved to {output_path_vision_agent}")
     else:
         logger.info("Vision agent results was not evaluated successfully; nothing to compare.")
+
+    ### Save comparison table for synthesis agent to local
+    if all_llm_backbone_eval_results_for_sysnthesis_agent:
+        comparison_df_synthesis_agent=AgentEvalMetrics.coparison_table_pd(all_llm_backbone_eval_results_for_sysnthesis_agent)
+        logger.info(f"Comparison synthesis agent results:\n\n{comparison_df_synthesis_agent.to_string(index=False)}\n")
+        output_path_synthesis_agent=os.path.join(config["EVAL_RESULTS_DIR"], "synthesis_agent" ,f"synthesis_agent_results_{synthesis_prompt_version}.csv")
+        os.makedirs(os.path.dirname(output_path_synthesis_agent), exist_ok=True)
+        comparison_df_synthesis_agent.to_csv(output_path_synthesis_agent, index=False)
+        logger.info(f"Synthesis agent results saved to {output_path_synthesis_agent}")
+    else:
+        logger.info("Synthesis agent results was not evaluated successfully; nothing to compare.")

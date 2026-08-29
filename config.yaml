@@ -20,7 +20,7 @@ PATHOLOGY_MAPPING:
     Lung Opacity: lung_opacity
     Enlarged Cardiomediastinum: enlarged_cardiomediastinum
 
-TOP_K_RETRIEVAL: 5
+TOP_K_RETRIEVAL: 3
 
 ### IU Xry Dataset
 IU_DATASET_ANNOTATION_JSON_PATH: "/teamspace/studios/this_studio/datas/iu_xray/annotation.json"
@@ -33,7 +33,7 @@ FINE_TUNED_BIOMEDCLIP: "/teamspace/studios/this_studio/checkpoints/biomedclip_fi
 
 ### For Evaluation 
 USE_BERT_SCORE: False
-BOOTSTRAP_SAMPLES: 0 #1000
+BOOTSTRAP_SAMPLES: 1000
 EVAL_RESULTS_DIR: "/teamspace/studios/this_studio/results"
 
 ### Retrieval Database Directory
@@ -81,7 +81,10 @@ SAVE_DRAFT_REPORTS: "/teamspace/studios/this_studio/results"
 ### Refine agent
 SAVE_REFINED_REPORTS: "/teamspace/studios/this_studio/results"
 
+### Synthesis agent
+SAVE_FINAL_REPORTS: "/teamspace/studios/this_studio/results"
+
 ### Vision agent 
 SAVE_VISUAL_DESCRIPTIONS: "/teamspace/studios/this_studio/results"
-FORCE_REGENERATE_VISUAL_DESCRIPTIONS: True
+FORCE_REGENERATE_VISUAL_DESCRIPTIONS: False
 
